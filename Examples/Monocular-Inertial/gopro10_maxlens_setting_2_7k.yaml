@@ -1,0 +1,147 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+Camera.type: "KannalaBrandt8"
+# Camera calibration and distortion parameters (OpenICC https://github.com/urbste/OpenImuCameraCalibrator)
+Camera.fx: 817.1101870176725
+Camera.fy: 817.1101870176725
+Camera.cx: 1359.9183434513943
+Camera.cy: 1012.2242696860213
+
+Camera.k1: 0.05074431922901474
+Camera.k2: -0.08807378365242459
+Camera.k3: 0.113991524573101
+Camera.k4: -0.05326281017305673
+
+# {
+#   "final_reproj_error": 0.29499550218999576,
+#   "fps": 59.94005994005994,
+#   "image_height": 2028,
+#   "image_width": 2704,
+#   "intrinsic_type": "FISHEYE",
+#   "intrinsics": {
+#     "aspect_ratio": 1.0007425329486843,
+#     "focal_length": 817.1101870176725,
+#     "principal_pt_x": 1359.9183434513943,
+#     "principal_pt_y": 1012.2242696860213,
+#     "radial_distortion_1": 0.05074431922901474,
+#     "radial_distortion_2": -0.08807378365242459,
+#     "radial_distortion_3": 0.113991524573101,
+#     "radial_distortion_4": -0.05326281017305673,
+#     "skew": 0.0
+#   },
+#   "nr_calib_images": 189,
+#   "stabelized": false
+# }
+
+
+# Camera resolution
+Camera.width: 2704
+Camera.height: 2028
+
+# Camera frames per second
+Camera.fps: 60.0
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Transformation from camera to imu (body frame)
+# calibrated with OpenICC https://github.com/urbste/OpenImuCameraCalibrator
+# Tbc: !!opencv-matrix
+#    rows: 4
+#    cols: 4
+#    dt: f
+#    data: [-0.999969 , 0.00167755, -0.00766001,  -0.000830364 ,
+#            0.00767096,  0.00661798,   -0.999949, -0.0164199,
+#           -0.00162677,   -0.999977, -0.00663064, -0.00567071,
+#           0.0, 0.0, 0.0, 1.0]
+
+Tbc: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [-0.99999698, -0.00237099,  0.00065039, -0.000830364 ,
+          -0.00063601, -0.00606028, -0.99998143, -0.0164199,
+           0.00237489, -0.99997883,  0.00605876, -0.00567071,
+          0.0, 0.0, 0.0, 1.0]
+
+# R.from_quat([0.0010663718731824497, -0.7049606261671266, 0.7092453767201062, 0.0006115604918776237]).as_matrix()
+# array([[-0.99999698, -0.00237099,  0.00065039],
+#        [-0.00063601, -0.00606028, -0.99998143],
+#        [ 0.00237489, -0.99997883,  0.00605876]])
+
+
+# IMU noise -> use OpenICC https://github.com/urbste/OpenImuCameraCalibrator
+IMU.NoiseGyro: 0.0015 # rad/s^0.5
+IMU.NoiseAcc: 0.017 # m/s^1.5
+IMU.GyroWalk: 5e-5 # rad/s^1.5
+IMU.AccWalk: 0.0055 # m/s^2.5
+IMU.Frequency: 200
+
+# {
+#         "gyro_bias": {
+#                 "x": 0.0013049101083104603,
+#                 "y": 0.0017101296590437513,
+#                 "z": -0.0025281932567609677
+#         },
+#         "accl_bias": {
+#                 "x": -0.11453179264131683,
+#                 "y": -0.017065289998096173,
+#                 "z": 0.6861426405544804
+#         }
+# }
+
+# {
+#     "gyro_bias": [
+#         0.0013049101083104603,
+#         0.0017101296590437513,
+#         -0.0025281932567609677
+#     ],
+#     "gyro_to_camera_rotation": {
+#         "w": 0.0006115604918776237,
+#         "x": 0.0010663718731824497,
+#         "y": -0.7049606261671266,
+#         "z": 0.7092453767201062
+#     },
+#     "time_offset_gyro_to_cam": 0.04278639912513715
+# }
+
+
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 1250 # Tested with 1250
+
+# ORB Extractor: Scale factor between levels in the scale pyramid
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid
+ORBextractor.nLevels: 6
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast
+# ORBextractor.iniThFAST: 20
+# ORBextractor.minThFAST: 7
+ORBextractor.iniThFAST: 20 # 20
+ORBextractor.minThFAST: 7 # 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3
+Viewer.ViewpointX: 0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -3.5 # -1.8
+Viewer.ViewpointF: 500

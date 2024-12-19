@@ -89,10 +89,10 @@ bool LoadTelemetry(const string &path_to_telemetry_file,
 
 int main(int argc, char **argv) {
   // Register signal and signal handler
-  // A process running as PID 1 inside a container 
-  // is treated specially by Linux: it ignores any 
-  // signal with the default action. As a result, 
-  // the process will not terminate on SIGINT or 
+  // A process running as PID 1 inside a container
+  // is treated specially by Linux: it ignores any
+  // signal with the default action. As a result,
+  // the process will not terminate on SIGINT or
   // SIGTERM unless it is coded to do so.
   // This allows stopping the docker container with ctrl-c
   signal(SIGINT, signal_callback_handler);
@@ -185,8 +185,9 @@ int main(int argc, char **argv) {
   // Create SLAM system. It initializes all system threads and gets ready to process frames.
   cv::Ptr<cv::aruco::Dictionary> aruco_dict = cv::aruco::getPredefinedDictionary(aruco_dict_id);
   ORB_SLAM3::System SLAM(
-    vocabulary, setting, 
-    ORB_SLAM3::System::IMU_MONOCULAR, 
+    vocabulary, setting,
+    // ORB_SLAM3::System::IMU_MONOCULAR,
+    ORB_SLAM3::System::MONOCULAR,
     enable_gui, load_map, save_map,
     aruco_dict, init_tag_id, init_tag_size
   );
@@ -204,7 +205,7 @@ int main(int argc, char **argv) {
   cout << "Video opened using backend " << cap.getBackendName() << endl;
   cout << "There are " << nImages << " frames in total" << endl;
   cout << "video FPS " << fps << endl;
-  
+
   std::vector<ORB_SLAM3::IMU::Point> vImuMeas;
   size_t last_imu_idx = 0;
   int n_lost_frames = 0;
@@ -216,7 +217,8 @@ int main(int argc, char **argv) {
     bool success = cap.read(im);
     if (!success) {
       cout << "cap.read failed!" << endl;
-      break;
+      // break;
+      continue;
     }
 
     // resize image and draw gripper mask

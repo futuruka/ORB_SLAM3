@@ -102,7 +102,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     // Load ORB Vocabulary
     mStrVocabularyFilePath = strVocFile;
-    
+
     cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
     mpVocabulary = new ORBVocabulary();
     bool bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
@@ -154,7 +154,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Initialize the Tracking thread
     //(it will live in the main thread of execution, the one that called this constructor)
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
-                             mpAtlas, mpKeyFrameDatabase, strSettingsFile, mSensor, settings_, 
+                             mpAtlas, mpKeyFrameDatabase, strSettingsFile, mSensor, settings_,
                              aruco_dict, init_tag_id, init_tag_size);
 
     //Initialize the Local Mapping thread and launch
@@ -608,11 +608,11 @@ bool System::isShutDown() {
 void System::SaveTrajectoryCSV(const string &filename)
 {
     cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
-    if(mSensor==MONOCULAR)
-    {
-        cerr << "ERROR: SaveTrajectoryCSV cannot be used for monocular." << endl;
-        return;
-    }
+    // if(mSensor==MONOCULAR)
+    // {
+    //     cerr << "ERROR: SaveTrajectoryCSV cannot be used for monocular." << endl;
+    //     return;
+    // }
 
     // Select the appropriate Map
     vector<Map*> vpMaps = mpAtlas->GetAllMaps();
@@ -665,7 +665,7 @@ void System::SaveTrajectoryCSV(const string &filename)
         f << frame_idx << ',';
         f << setprecision(6) << *iter_timestamp << ',';
         f << *iter_state << ',';
-        
+
         if (*iter_is_lost){
             // tracking lost, write all zero for position and rotation
             f << "true,false,";
@@ -673,7 +673,7 @@ void System::SaveTrajectoryCSV(const string &filename)
             continue;
         }
 
-        
+
         KeyFrame* pKF = *iter_reference_keyframe;
         Sophus::SE3f Trw;
 
@@ -1554,6 +1554,27 @@ float System::GetImageScale()
     return mpTracker->GetImageScale();
 }
 
+void saveMapPointsToCSV(Atlas* mpAtlas, const std::string& filename) {
+    std::ofstream ofs(filename);
+
+    if (!ofs.is_open()) {
+        throw std::ios_base::failure("Failed to open file: " + filename);
+    }
+
+    ofs << "x,y,z\n";
+
+    for (const auto& mapPoint : mpAtlas->GetCurrentMap()->GetAllMapPoints()) {
+        ofs
+        << mapPoint->GetWorldPos().x() << ","
+        << mapPoint->GetWorldPos().y() << ","
+        << mapPoint->GetWorldPos().z() << "\n";
+    }
+
+    ofs.close();
+
+    std::cout << "Map points successfully written to " << filename << std::endl;
+}
+
 void System::SaveAtlas(int type){
     if(!mStrSaveAtlasToFile.empty())
     {
@@ -1563,6 +1584,8 @@ void System::SaveAtlas(int type){
         mpAtlas->PreSave();
 
         string pathSaveFileName = mStrSaveAtlasToFile;
+        string pathSaveMapPointsFileName = mStrSaveAtlasToFile + ".points.csv";
+        saveMapPointsToCSV(mpAtlas, pathSaveMapPointsFileName);
 
         string strVocabularyChecksum = CalculateCheckSum(mStrVocabularyFilePath,TEXT_FILE);
         std::size_t found = mStrVocabularyFilePath.find_last_of("/\\");
